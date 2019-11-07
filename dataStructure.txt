@@ -1,0 +1,22 @@
+Between Server and website
+
+MapInformationClass:
+long — latitude
+long — longtitude
+Float — positivePercentage
+Float — negativePercentage
+
+SearchInformationClass:
+String — keywords
+
+1.searchActionInterface(String: keywords)
+Return [MapInformationClass]
+
+2.zoomActionInterface(String: keywords, <Int, [long]> locationDic)
+Return [MapInformationClass]
+
+Among Server
+TweetsClass:
+<[long], [String]> tweetsDic
+
+<[long], [long]> SentimentResults

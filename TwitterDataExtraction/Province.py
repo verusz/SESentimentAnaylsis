@@ -1,4 +1,4 @@
-class Province():
+class Province:
     centerLongtitude = ""
     centerLatitude = ""
     name = ""

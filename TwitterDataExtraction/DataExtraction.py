@@ -68,6 +68,6 @@ class DataExtraction:
                 print(tweet.created_at, tweet.text)
                 provinceTweets.append(formateTweet)
 
-            tweetsByProvince.append(TweetsByProvince(province.name, provinceTweets))
+            tweetsByProvince.append(TweetsByProvince(province.name, provinceTweets, province.centerLongtitude, province.centerLatitude))
 
         return SentimentModule.sentimentProbability(tweetsByProvince)

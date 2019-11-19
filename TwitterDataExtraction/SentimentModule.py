@@ -23,8 +23,8 @@ class SentimentModule:
                 tweet.negativePercentage = text_tb.sentiment.subjectivity
                 positivePercentageSum += tweet.positivePercentage
                 negativePercentageSum += tweet.negativePercentage
-            province.averageNegativePercentage = negativePercentageSum / province.tweets.count
-            province.averagePositivePercentage = positivePercentageSum / province.tweets.count
+            province.averageNegativePercentage = negativePercentageSum / len(province.tweets)
+            province.averagePositivePercentage = positivePercentageSum / len(province.tweets)
         print("end analysis_____________")
 
         return tweetsByProvince

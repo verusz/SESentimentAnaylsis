@@ -31,7 +31,9 @@ def zoom():
     if request.method == 'GET':
         keywords = request.args.get("keywords")
         longitude = request.args.get("longitude")
-        data = DataExtraction.anaylsis(keywords)
+        latitude = request.args.get("latitude")
+        radius = request.args.get("radius")
+        data = DataExtraction.anaylsis(keywords, longitude, latitude, radius)
         # for model in data:
         json_str = TweetsByProvinceEncoder().encode(data)
 

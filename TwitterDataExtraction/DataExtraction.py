@@ -14,12 +14,12 @@ class DataExtraction:
     access_token_secret = 'piYcEkJqVj6wDxxJVrJcv01UhFLfXif22TClZWdx6T8nU'
 
     @staticmethod
-    def anaylsis(keywords, longitude = None, latitude = None):
+    def anaylsis(keywords, longitude = None, latitude = None, radius = None):
 
-        return DataExtraction.anaylsisImplementation(keywords)
+        return DataExtraction.anaylsisImplementation(keywords, longitude, latitude, radius)
 
     @staticmethod
-    def anaylsisImplementation(keywords, longitude = None, latitude = None):
+    def anaylsisImplementation(keywords, longitude = None, latitude = None, radius = None):
 
         auth = tweepy.OAuthHandler(DataExtraction.consumer_key, DataExtraction.consumer_secret)
         auth.set_access_token(DataExtraction.access_token, DataExtraction.access_token_secret)
@@ -28,14 +28,14 @@ class DataExtraction:
         if longitude == None and latitude == None:
             return SentimentModule.sentimentProbability(DataExtraction.searchApi(keywords, api))
         else:
-            return SentimentModule.sentimentProbability(DataExtraction.zoomApi(keywords, longitude, latitude, api))
+            return SentimentModule.sentimentProbability(DataExtraction.zoomApi(keywords, longitude, latitude, api, radius))
 
     # the implementation of zoom api;
     # get the keywords, location, return the TweetsByProvince Class;
     @staticmethod
-    def zoomApi(keywords, longitude, latitude, api):
+    def zoomApi(keywords, longitude, latitude, api, radius = "10km"):
 
-        tweets = tweepy.Cursor(api.search, q=keywords, geocode=longitude + "," + latitude + "10km",
+        tweets = tweepy.Cursor(api.search, q=keywords, geocode=longitude + "," + latitude + "radius",
                                    lang="en",
                                    result_type="recent"
                                    ).items(5)
@@ -48,7 +48,7 @@ class DataExtraction:
             provinceTweets.append(formateTweet)
 
         tweetsByProvince.append(TweetsByProvince("", provinceTweets, longitude, latitude))
-        return tweetsByProvinces
+        return tweetsByProvince
 
 
     @staticmethod

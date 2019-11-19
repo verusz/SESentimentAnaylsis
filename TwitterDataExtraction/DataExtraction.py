@@ -7,20 +7,52 @@ from TweetsByProvince import TweetsByProvince
 
 
 class DataExtraction:
+
+    consumer_key = 'gfWzybYMttpOTZPd3YgglEDtT'
+    consumer_secret = 'HkIvtabkS3k9ueswwmdTXjB24DqQz8r0iBXzK1sj9xSvTVunBq'
+    access_token = '1192624255130845184-47D3JNJDALjEFFuQKbt3CDusV8jNxV'
+    access_token_secret = 'piYcEkJqVj6wDxxJVrJcv01UhFLfXif22TClZWdx6T8nU'
+
     @staticmethod
-    def anaylsis(keywords):
+    def anaylsis(keywords, longitude = None, latitude = None):
+
         return DataExtraction.anaylsisImplementation(keywords)
 
     @staticmethod
-    def anaylsisImplementation(keywords):
-        consumer_key = 'gfWzybYMttpOTZPd3YgglEDtT'
-        consumer_secret = 'HkIvtabkS3k9ueswwmdTXjB24DqQz8r0iBXzK1sj9xSvTVunBq'
-        access_token = '1192624255130845184-47D3JNJDALjEFFuQKbt3CDusV8jNxV'
-        access_token_secret = 'piYcEkJqVj6wDxxJVrJcv01UhFLfXif22TClZWdx6T8nU'
+    def anaylsisImplementation(keywords, longitude = None, latitude = None):
 
-        auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-        auth.set_access_token(access_token, access_token_secret)
+        auth = tweepy.OAuthHandler(DataExtraction.consumer_key, DataExtraction.consumer_secret)
+        auth.set_access_token(DataExtraction.access_token, DataExtraction.access_token_secret)
         api = tweepy.API(auth, wait_on_rate_limit=True)
+
+        if longitude == None and latitude == None:
+            return SentimentModule.sentimentProbability(DataExtraction.searchApi(keywords, api))
+        else:
+            return SentimentModule.sentimentProbability(DataExtraction.zoomApi(keywords, longitude, latitude, api))
+
+    # the implementation of zoom api;
+    # get the keywords, location, return the TweetsByProvince Class;
+    @staticmethod
+    def zoomApi(keywords, longitude, latitude, api):
+
+        tweets = tweepy.Cursor(api.search, q=keywords, geocode=longitude + "," + latitude + "10km",
+                                   lang="en",
+                                   result_type="recent"
+                                   ).items(5)
+        tweetsByProvince = []
+        provinceTweets = []
+        for tweet in tweets:
+            formateTweet = Tweet(longitude, latitude, "", tweet.text)
+
+            print(tweet.created_at, tweet.text)
+            provinceTweets.append(formateTweet)
+
+        tweetsByProvince.append(TweetsByProvince("", provinceTweets, longitude, latitude))
+        return tweetsByProvinces
+
+
+    @staticmethod
+    def searchApi(keywords, api):
 
         Saskatchewan = Province("-105", "55", "Saskatchewan", "769km")
         Alberta = Province("-116", "54", "Alberta", "813km")
@@ -69,5 +101,4 @@ class DataExtraction:
                 provinceTweets.append(formateTweet)
 
             tweetsByProvince.append(TweetsByProvince(province.name, provinceTweets, province.centerLongtitude, province.centerLatitude))
-
-        return SentimentModule.sentimentProbability(tweetsByProvince)
+        return tweetsByProvince

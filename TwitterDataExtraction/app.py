@@ -26,6 +26,22 @@ def search():
 
     return 'Nothing Happened!'
 
+@app.route('/zoom', methods=['GET'])
+def zoom():
+    if request.method == 'GET':
+        keywords = request.args.get("keywords")
+        longitude = request.args.get("longitude")
+        data = DataExtraction.anaylsis(keywords)
+        # for model in data:
+        json_str = TweetsByProvinceEncoder().encode(data)
+
+        j = json.dumps(json_str)
+        # print("return data________ {}".format())
+
+        return j
+
+    return 'Nothing Happened!'
+
 
 '''
 Query from the URL parameters: ?key=value

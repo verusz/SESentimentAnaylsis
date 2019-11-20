@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <?php header('Access-Control-Allow-Origin: *'); ?>
+    <title>SESentimentAnalysis</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+
+    <style>
+        #map
+        {
+            height: 600px; 
+            width: 100%;
+        }   
+    </style>
+
+    
+</head>
+<body>
+    <div class = "container">
+    <h2 id="text-center">Enter Keyword: </h2>
+    <form id ="keyword-form">
+       <input type="text" id = "keyword-input" class="form-control form-control-lg">
+              <br>
+        <button type="button" class="btn btn-primary btn-block">Submit</button>
+    </form>
+        <br>
+    <div id = "map"></div>
+    </div>
+    <script>
+       // Note: This example requires that you consent to location sharing when
+      // prompted by your browser. If you see the error "The Geolocation service
+      // failed.", it means you probably did not give permission for the browser to
+      // locate you.
+      var map, infoWindow;
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 43.4430, lng: -79.2224},
+          zoom: 6
+        });
+        infoWindow = new google.maps.InfoWindow;
+        // Try HTML5 geolocation.
+      /* if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(function(position) {
+            var pos = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+
+            infoWindow.setPosition(pos);
+            infoWindow.setContent('Location found.');
+            infoWindow.open(map);
+            map.setCenter(pos);
+          }, function() {
+            handleLocationError(true, infoWindow, map.getCenter());
+          });
+        } else {
+          // Browser doesn't support Geolocation
+          handleLocationError(false, infoWindow, map.getCenter());
+        }
+      }
+
+      function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+        infoWindow.setPosition(pos);
+        infoWindow.setContent(browserHasGeolocation ?
+                              'Error: The Geolocation service failed.' :
+                              'Error: Your browser doesn\'t support geolocation.');
+        infoWindow.open(map);*/
+      }
+    </script>
+
+    <script> 
+    
+    $("button").click(function () {
+      var keyword = document.getElementById('keyword-input').value;
+      console.log('11111111');
+      let keywordData = {
+        keyword: keyword
+      }
+      $.ajax({    
+         crossDomain: true, 
+        url: 'http://127.0.0.1:5000/search',
+        data: keywordData,
+        datatype: "json",
+        type: 'GET',
+
+        success: function (data) {
+          //成功后回调
+          console.log(data)
+        },
+        error: function (jqXHR,textStatus,errorThrown) {
+          //失败后回调
+          console.log("You can not send Cross Domain AJAX requests: "+errorThrown);
+        },
+      })
+    })
+    
+
+         
+        
+
+        /*
+        function geocode(e){
+         
+         e.preventDefault();
+         
+         var keyword = document.getElementById('keyword-input').value;
+
+         var center=map.getCenter;
+        
+       
+         axios.get('http://127.0.0.1:5000/search', {
+             crossDomain: true,
+             params:{
+                 keywords:keyword
+                 
+             }
+         })
+         .then(function(response){
+             // log full response
+               console.log(response.data);
+             
+             // Formatted latlog
+             var formattedlaglog = console.log(response.data.results[0])
+             
+               })
+         .catch(function(error){
+             console.log(error);
+         });
+         
+        */
+
+    </script>
+    
+     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAKBLTkJ2YvagpOUYX_RBiYk0l1kZE688k&callback=initMap"></script>
+ 
+    </body>
+</html>

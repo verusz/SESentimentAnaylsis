@@ -1,4 +1,5 @@
 import json
+import time
 from json import JSONEncoder
 
 from Tweet import Tweet
@@ -22,10 +23,20 @@ class TweetsByProvince:
 
 class TweetsByProvinceEncoder(JSONEncoder):
     def default(self, o):
-        tmp = {}
+        outer_TweetsByProvince = {}
         if isinstance(o, TweetsByProvince):
-            for tweet in o.tweets:
-                tmp.update(tweet.__dict__)
-            return tmp
+            inner_tweet = []
+            for tweet in o.tweets:  # fetch the tweets' attribute of an instance of TweetsByProvince
+                # print(tweet.__dict__)
+                inner_tweet.append(tweet.__dict__)
+                # print(inner_tweet)
+            outer_TweetsByProvince['name'] = o.name
+            outer_TweetsByProvince['longitude'] = o.longitude
+            outer_TweetsByProvince['latitude'] = o.latitude
+            outer_TweetsByProvince['averageNegativePercentage'] = o.averageNegativePercentage
+            outer_TweetsByProvince['averagePositivePercentage'] = o.averagePositivePercentage
+            outer_TweetsByProvince['tweets'] = inner_tweet
+            print(outer_TweetsByProvince)
+            return outer_TweetsByProvince
         else:
             return json.JSONEncoder.default(self, o)

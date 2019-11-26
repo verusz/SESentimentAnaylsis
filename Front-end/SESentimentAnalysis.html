@@ -102,7 +102,7 @@
     var keyword;
     // call API with keywords
     var clickButton = document.getElementById('button');
-    clickButton.addEventListener('click',debounce(buttonClick,5000));
+    clickButton.addEventListener('click',buttonClick);
     function buttonClick(){
         keyword = document.getElementById('keyword-input').value;
       let keywordData = {

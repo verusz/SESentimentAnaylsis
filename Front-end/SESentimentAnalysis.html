@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <?php header('Access-Control-Allow-Origin: *'); ?>
+    <title>SESentimentAnalysis</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    
+    <style>
+        #map
+        {
+            height: 600px; 
+            width: 100%;
+        } 
+        #NegativeH{
+            color: aliceblue;
+        }
+        /* Style the buttons that are used to open and close the accordion panel */
+        .accordion {
+            background-color: #eee;
+            color: #444;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            text-align: left;
+            border: none;
+            outline: none;
+            transition: 0.4s;
+        }
+
+/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+        .active, .accordion:hover {
+            background-color: #ccc;
+        }
+
+/* Style the accordion panel. Note: hidden by default */
+        .panel {
+            padding: 0 18px;
+            background-color: white;
+            display: none;
+            overflow: scroll;
+            max-height: 300px;
+        }
+    </style>
+
+    
+</head>
+<body style="height:100%;">
+    <br>
+    <div class = "container">
+    <h2 id="text-center">Enter Keyword: </h2>
+    <form id ="keyword-form">
+       <input type="text" id = "keyword-input" class="form-control form-control-lg">
+              <br>
+        <button type="button" id="button" class="btn btn-primary btn-block">Submit</button>
+    </form>
+        <br>
+        
+    <div id = "map"></div>
+      <br>
+    
+    <h2>Tweets Details: </h2>    
+    <button class="accordion">Positive</button>
+        <div class="panel">
+            <text id="PositiveP"></text>
+        </div>
+
+    <button class="accordion">Neutral</button>
+        <div class="panel">
+            <text id="NeutralP"></text>
+        </div>
+
+    <button class="accordion">Negative</button>
+        <div class="panel">
+            <text id="NegativeP"></text>
+        </div>
+               
+
+    <br>
+</div>
+    
+    
+    <script>
+       // Note: This example requires that you consent to location sharing when
+      // prompted by your browser. If you see the error "The Geolocation service
+      // failed.", it means you probably did not give permission for the browser to
+      // locate you.
+      var map, infoWindow;
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 56.1304, lng: -106.3468},
+          zoom: 4
+        });
+        infoWindow = new google.maps.InfoWindow;
+      }
+    
+    //debounce 
+    function debounce(fn,delay){
+        let handle;
+        return function(e){
+            clearTimeout(handle);
+            handle = setTimeout(()=>{
+                fn(e);
+            },delay);
+        }
+    }
+        
+    var keyword;
+    // call API with keywords
+    var clickButton = document.getElementById('button');
+    clickButton.addEventListener('click',debounce(buttonClick,7000));
+    function buttonClick(){
+        keyword = document.getElementById('keyword-input').value;
+      let keywordData = {
+        keyword: keyword
+      }
+      $.ajax({    
+         crossDomain: true, 
+        url: 'http://127.0.0.1:5000/search',
+        data: keywordData,
+        datatype: "json",
+        type: 'GET',
+
+        success: function (data) {
+          //成功后回调
+            //console.log(data);
+            getJSON(data);
+        },
+        error: function (jqXHR,textStatus,errorThrown) {
+          //失败后回调
+          console.log("You can not send Cross Domain AJAX requests: "+errorThrown);
+        },
+      })
+    }
+    
+    // call API with keywords and position
+    var centermap = document.getElementById('map');
+    centermap.addEventListener('click',debounce(mapCenterChange,7000));                             
+    function mapCenterChange(){
+        var centerlatlng=map.getCenter();
+        console.log(centerlatlng.lat(),centerlatlng.lng());
+        if (keyword!=null){
+                  let keywordData = {
+                        keyword: keyword,
+                        longtitude:centerlatlng.lng(),
+                        latitude:centerlatlng.lat()
+                }
+                $.ajax({
+                    crossDomain: true, 
+                    url: 'http://127.0.0.1:5000/search',
+                    data: keywordData,
+                    datatype: "JSON",
+                    type: 'GET',
+                    success: function (data) {
+                    //成功后回调                 
+                        getJSON(data);
+                    },
+                    error: function (jqXHR,textStatus,errorThrown) {
+                    //失败后回调
+                    console.log("You can not send Cross Domain AJAX requests: "+errorThrown);
+                    },
+                    })
+            }
+    }
+      
+    //formatting data receive from API
+    function getJSON(data){ 
+        var evalJson = eval('('+data+')');
+        let obj =JSON.parse(evalJson);
+            console.log(obj);
+        //for (i=0; i<obj.length; i++) {
+            //console.log(obj[i].latitude,obj[i].longitude,obj[i].averagePositivePercentage,obj[i].averageNegativePercentage);
+
+        //}
+        pointMap(obj);
+        printTweets(obj);
+    }
+      
+        // emoji
+        var icons = {
+             positiveP:{
+                 icon: "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/72/emojidex/112/smiling-face-with-open-mouth_1f603.png"
+             },
+             negativeP:{
+                 icon: "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/72/emojidex/112/pensive-face_1f614.png"
+             },
+            neutralP:{
+                icon: "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/72/emojidex/112/neutral-face_1f610.png"
+            }
+         };    
+    
+    // pointing emoji in Google map
+    function pointMap (obj){
+
+        var i = 0;
+         for (i=0; i<obj.length; i++) {
+           var position = new google.maps.LatLng(obj[i].latitude, obj[i].longitude);
+            
+             if (obj[i].averagePositivePercentage >= 0.6)
+                var icon=icons['positiveP'].icon;        
+             else if (obj[i].averagePositivePercentage <= 0.4)
+                 var icon=icons['negativeP'].icon;
+             else 
+                 var icon = icons['neutralP'].icon;
+             
+         //console.log(position,icon);
+          var marker = new google.maps.Marker({
+            position: position,
+            icon: icon,
+            map:map
+          });
+        };
+         marker.setMap(map);
+    }
+    
+    // show tweets content to webpage
+    function printTweets(obj) {
+        let strpos="",strneu="",strneg="";
+        for (i=0; i<obj.length; i++) {
+            console.log(obj[i].tweets);
+            var count = obj[i].tweets.length;
+            var obj1=obj[i].tweets;
+            for (j=0;j<count;j++)
+                {
+                    let percent = obj1[j].positivePercentage;
+                    let str = obj1[j].name +"<br/>"+ obj1[j].text;
+                    //console.log(str);
+                    //console.log(obj1[j].name,obj1[j].text);
+                    if (percent>=0.6){           
+                        strpos=strpos.concat("<p>"+str+"</p>");
+                    }
+                    else if (percent<=0.4){
+                        strneg=strneg.concat("<p>"+str+"</p>");
+                    }
+                    else
+                        strneu=strneu.concat("<p>"+str+"</p>");
+                }
+        }
+        //console.log("pos " + strpos);
+        //console.log("neg " + strneg);
+        //console.log("neu " + strneu);
+        document.getElementById('PositiveP').innerHTML=strpos;
+        document.getElementById('NeutralP').innerHTML=strneu;
+        document.getElementById('NegativeP').innerHTML=strneg;
+    }
+    
+        // control tweets display
+        var acc = document.getElementsByClassName("accordion");
+        var i;
+
+        for (i = 0; i < acc.length; i++) {
+            acc[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+        var panel = this.nextElementSibling;
+        if (panel.style.display === "block") {
+            panel.style.display = "none";
+        } else {
+        panel.style.display = "block";
+        }   
+        });
+        }
+        
+    </script>
+
+     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAKBLTkJ2YvagpOUYX_RBiYk0l1kZE688k&callback=initMap"></script>
+ 
+    </body>
+</html>

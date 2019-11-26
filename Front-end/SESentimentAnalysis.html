@@ -14,9 +14,6 @@
             height: 600px; 
             width: 100%;
         } 
-        #NegativeH{
-            color: aliceblue;
-        }
         /* Style the buttons that are used to open and close the accordion panel */
         .accordion {
             background-color: #eee;
@@ -106,7 +103,7 @@
     var keyword;
     // call API with keywords
     var clickButton = document.getElementById('button');
-    clickButton.addEventListener('click',debounce(buttonClick,7000));
+    clickButton.addEventListener('click',debounce(buttonClick,5000));
     function buttonClick(){
         keyword = document.getElementById('keyword-input').value;
       let keywordData = {
@@ -133,7 +130,7 @@
     
     // call API with keywords and position
     var centermap = document.getElementById('map');
-    centermap.addEventListener('click',debounce(mapCenterChange,7000));                             
+    centermap.addEventListener('click',debounce(mapCenterChange,5000));                             
     function mapCenterChange(){
         var centerlatlng=map.getCenter();
         console.log(centerlatlng.lat(),centerlatlng.lng());

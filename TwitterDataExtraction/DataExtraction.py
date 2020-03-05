@@ -54,23 +54,28 @@ class DataExtraction:
     @staticmethod
     def searchApi(keywords, api):
 
-        Saskatchewan = Province("-105", "55", "Saskatchewan", "769km")
-        Alberta = Province("-116", "54", "Alberta", "813km")
-        BritishColumbia = Province("-126.5", "54.15", "BritishColumbia", "961km")
-        Nunavut = Province("-105", "55", "Nunavut", "1391km")
-        NorthwestTerritories = Province("-105", "55", "NorthwestTerritories", "1087km")
-        Yukon = Province("-132.405", "64.83", "Yukon", "688km")
-        Ontario = Province("-84.75", "49.21", "Ontario", "1037km")
-        Québec = Province("-68.43", "53.79", "Québec", "1241km")
-        NewBrunswick = Province("-66.42", "46.34", "NewBrunswick", "270km")
-        NovaScotia = Province("-63.00", "45.23", "NovaScotia", "235km")
-        NewfoundlandAndLabrador = Province("-60.20", "53.49", "NewfoundlandAndLabrador", "636km")
-        Manitoba = Province("-95.49", "54.50", "Manitoba", "804km")
-        PrinceEdwardIsland = Province("-63.19", "46.51", "PrinceEdwardIsland", "75km")
+        # Saskatchewan = Province("-105", "55", "Saskatchewan", "769km")
+        # Alberta = Province("-116", "54", "Alberta", "813km")
+        # BritishColumbia = Province("-126.5", "54.15", "BritishColumbia", "961km")
+        # Nunavut = Province("-105", "55", "Nunavut", "1391km")
+        # NorthwestTerritories = Province("-105", "55", "NorthwestTerritories", "1087km")
+        # Yukon = Province("-132.405", "64.83", "Yukon", "688km")
+        # Ontario = Province("-84.75", "49.21", "Ontario", "1037km")
+        # Québec = Province("-68.43", "53.79", "Québec", "1241km")
+        # NewBrunswick = Province("-66.42", "46.34", "NewBrunswick", "270km")
+        # NovaScotia = Province("-63.00", "45.23", "NovaScotia", "235km")
+        # NewfoundlandAndLabrador = Province("-60.20", "53.49", "NewfoundlandAndLabrador", "636km")
+        # Manitoba = Province("-95.49", "54.50", "Manitoba", "804km")
+        # PrinceEdwardIsland = Province("-63.19", "46.51", "PrinceEdwardIsland", "75km")
 
-        provinces = [Saskatchewan, Alberta, BritishColumbia, Nunavut, NorthwestTerritories, Yukon, Ontario, Québec,
-                     NewBrunswick, NovaScotia, NewfoundlandAndLabrador, Manitoba, PrinceEdwardIsland]
-
+        # provinces = [Saskatchewan, Alberta, BritishColumbia, Nunavut, NorthwestTerritories, Yukon, Ontario, Québec,
+        #              NewBrunswick, NovaScotia, NewfoundlandAndLabrador, Manitoba, PrinceEdwardIsland]
+        Asia = Province("100.619655", "34.047863", "Asia", "5000km")
+        Africa = Province("34.508523", "-8.783195", "Africa", "4000km")
+        NorthAmerica = Province("-105.255119", "54.525961", "NorthAmerica", "3500km")
+        SouthAmerica = Province("-55.491477", "-8.783195", "SouthAmerica", "3500km")
+        Europe = Province("15.255119", "54.525961", "Europe", "1500km")
+        provinces = []
         tweetsByProvince = []
         # Saskatchewan              | -109.99 | 48.99 | -101.36 | 60.00  769km
         # Alberta                   | -120.00 | 48.99 | -109.99 | 60.00  813

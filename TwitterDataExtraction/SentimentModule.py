@@ -1,14 +1,16 @@
 from textblob import TextBlob
 from textblob.sentiments import NaiveBayesAnalyzer
+from Tweet import Tweet
 
 
 class SentimentModule:
+
     @staticmethod
-    def sentimentProbability(tweetsByProvince):
+    def sentimentProbability(tweetsByProvince):#list[Tweet]
         """
         analyse the tweet, then set the positive and negative probability of this tweet
         """
-        print("start analysis_____________")
+        # print("start analysis_____________")
         for province in tweetsByProvince:
 
             positivePercentageSum = 0.0
@@ -17,7 +19,7 @@ class SentimentModule:
                 # text_tb = TextBlob(tweet.text, analyzer=NaiveBayesAnalyzer())
                 text_tb = TextBlob(tweet.text)
                 # print("positive------- = {}".format(text_tb.sentiment.p_pos))
-                print("polarity------- = {}".format(text_tb.sentiment.polarity))
+                # print("polarity------- = {}".format(text_tb.sentiment.polarity))
 
                 # use sentiment.polarity to classify polarity
                 if text_tb.sentiment.polarity >= 0:
@@ -33,7 +35,7 @@ class SentimentModule:
                 negativePercentageSum += tweet.negativePercentage
             province.averageNegativePercentage = negativePercentageSum / len(province.tweets)
             province.averagePositivePercentage = positivePercentageSum / len(province.tweets)
-        print("end analysis_____________")
+        # print("end analysis_____________")
 
         return tweetsByProvince
 
